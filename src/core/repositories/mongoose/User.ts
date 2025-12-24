@@ -1,5 +1,5 @@
-import { IUser, User } from "../../database/schema/User";
-import { IUserRepository } from "../IUserRepository";
+import { IUser, User } from "@/infra/database/schema/User";
+import { IUserRepository } from "@/infra/repositories/IUserRepository";
 
 export class UserRepository implements IUserRepository {
   async list(filter: object, skip: number, limit: number): Promise<IUser[]> {
@@ -11,8 +11,7 @@ export class UserRepository implements IUserRepository {
     return User.findById(id).select("-password");
   }
 
-  async fincByEmail(email: string) {
-    console.log(email);
+  async findByEmail(email: string) {
     return User.findOne({ email }).select("-password");
   }
 

@@ -2,9 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 export const app = express();
 
-import { connectToDatabase } from "./database/index.js";
-import { userRoutes } from "./routes/user.js";
-import { EntityNotFound } from "./errors/not-found.js";
+import { connectToDatabase } from "./infra/database/index.js";
+import { userRoutes } from "./http/controllers/user.js";
+import { EntityNotFound } from "./core/errors/not-found.js";
 import z from "zod";
 
 connectToDatabase()

@@ -1,4 +1,4 @@
-import { EntityNotFound } from "../errors/not-found";
+import { EntityNotFound } from "@/core/errors/not-found";
 import { UserRepository } from "../repositories/mongoose/User";
 
 interface User {

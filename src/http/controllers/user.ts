@@ -2,13 +2,13 @@ import { Router } from "express";
 const userRoutes = Router();
 
 import { z } from "zod";
-import { User } from "../database/schema/User.js";
-import { AuthenticateUserService } from "../services/authenticate-user-service";
-import { CreateUserService } from "../services/create-user-service";
-import { GetAuthenticateUserService } from "../services/get-authenticate-user-service";
-import { UserRepository } from "../repositories/mongoose/User";
+import { User } from "@/infra/database/schema/User.js";
+import { AuthenticateUserService } from "@/core/services/authenticate-user-service";
+import { CreateUserService } from "@/core/services/create-user-service";
+import { GetAuthenticateUserService } from "@/core/services/get-authenticate-user-service";
+import { UserRepository } from "@/core/repositories/mongoose/User";
 
-import { authMiddleware } from "../middleware/auth";
+import { authMiddleware } from "@/http/middleware/auth";
 
 const createUserSchema = z.object({
   email: z.email(),

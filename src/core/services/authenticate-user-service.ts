@@ -1,7 +1,7 @@
 import { sign } from "jsonwebtoken";
-import { InvalidCredentials } from "../errors/invalid-credentials";
-import { UserRepository } from "../repositories/mongoose/User";
+import { InvalidCredentials } from "@/core/errors/invalid-credentials";
 import bcrypt from "bcryptjs";
+import { IUserRepository } from "@/infra/repositories/IUserRepository";
 
 interface User {
   email: string;
@@ -9,14 +9,10 @@ interface User {
 }
 
 class AuthenticateUserService {
-  private userRepository;
-
-  constructor(userRepository: UserRepository) {
-    this.userRepository = userRepository;
-  }
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(userData: User) {
-    const existingUser = await this.userRepository.fincByEmail(userData.email);
+    const existingUser = await this.userRepository.findByEmail(userData.email);
 
     if (!existingUser) {
       throw new InvalidCredentials("Email/password incorrect");
@@ -32,7 +28,7 @@ class AuthenticateUserService {
     }
 
     const token = sign({}, "your-secret-token", {
-      subject: existingUser._id.toString(),
+      subject: existingUser.email,
       expiresIn: "7d",
     });
 

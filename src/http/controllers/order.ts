@@ -1,20 +1,29 @@
 import { Router } from "express";
 const orderRoutes = Router();
 
-import { z } from "zod";
-import { Order } from "@/database/schema/Order";
-import { paginationSchema } from "@/schemas/pagination";
+import { UpdateOrderService } from "@/core/services/update-order-service";
+import { CreateOrderService } from "@/core/services/create-order-service";
+import { DeleteOrderService } from "@/core/services/delete-order-service";
+import { GetOrderService } from "@/core/services/get-order-service";
+import { OrderRepository } from "@/core/repositories/mongoose/Order";
 
-const createOrder = z.object({
-  lab: z.string(),
-  patient: z.string(),
-});
+import { z } from "zod";
+import { Order } from "@/infra/database/schema/Order";
+import { paginationSchema } from "@/http/schemas/pagination";
+import { createOrder } from "../schemas/order";
+import { authMiddleware } from "../middleware/auth";
+
+const orderRepository = new OrderRepository();
+const createOrderService = new CreateOrderService(orderRepository);
+const getOrderService = new GetOrderService(orderRepository);
+const updateOrderService = new UpdateOrderService(orderRepository);
+const deleteOrderService = new DeleteOrderService(orderRepository);
 
 const paginationOrderSchema = paginationSchema.extend({
   state: z.string().optional(),
 });
 
-orderRoutes.post("/orders", async (req, res) => {
+orderRoutes.post("/orders", authMiddleware, async (req, res) => {
   const { lab, patient } = createOrder.parse(req.body);
 
   await Order.create({
@@ -27,7 +36,7 @@ orderRoutes.post("/orders", async (req, res) => {
   res.status(201).json({ message: "Order created successfully" });
 });
 
-orderRoutes.get("/orders", async (req, res) => {
+orderRoutes.get("/orders", authMiddleware, async (req, res) => {
   const {
     page = "1",
     limit = "10",
@@ -45,7 +54,7 @@ orderRoutes.get("/orders", async (req, res) => {
   res.json(orders);
 });
 
-orderRoutes.patch("/orders/:id/advance", async (req, res) => {
+orderRoutes.patch("/orders/:id/advance", authMiddleware, async (req, res) => {
   const {
     page = "1",
     limit = "10",

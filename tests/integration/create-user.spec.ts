@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import request from "supertest";
 import mongoose from "mongoose";
-import { app } from "../app"; // Importe seu app express aqui
-import { User } from "../database/schema/User";
+import { app } from "@/app"; // Importe seu app express aqui
+import { User } from "@/infra/database/schema/User";
 
 describe("User Routes", () => {
   // Conecta a um banco de teste antes de rodar os testes

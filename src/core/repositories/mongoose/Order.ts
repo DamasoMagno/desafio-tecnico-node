@@ -1,5 +1,5 @@
-import { Order, IOrder } from "../../database/schema/Order";
-import { IOrderRepository } from "../IOrderRepository";
+import { Order, IOrder } from "@/infra/database/schema/Order";
+import { IOrderRepository } from "@/infra/repositories/IOrderRepository";
 
 export class OrderRepository implements IOrderRepository {
   async list(filter: object, skip: number, limit: number): Promise<IOrder[]> {

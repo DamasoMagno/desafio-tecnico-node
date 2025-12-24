@@ -1,4 +1,4 @@
-import { IOrder } from "../database/schema/Order";
+import { IOrder } from "@/infra/database/schema/Order";
 
 export interface IOrderRepository {
   findById(id: string): Promise<IOrder | null>;
