@@ -3,15 +3,14 @@ const orderRoutes = Router();
 
 import { z } from "zod";
 import { Order } from "@/database/schema/Order";
+import { paginationSchema } from "@/schemas/pagination";
 
 const createOrder = z.object({
   lab: z.string(),
   patient: z.string(),
 });
 
-const paginationSchema = z.object({
-  page: z.string().optional(),
-  limit: z.string().optional(),
+const paginationOrderSchema = paginationSchema.extend({
   state: z.string().optional(),
 });
 
@@ -29,7 +28,11 @@ orderRoutes.post("/orders", async (req, res) => {
 });
 
 orderRoutes.get("/orders", async (req, res) => {
-  const { page = "1", limit = "10", state } = paginationSchema.parse(req.query);
+  const {
+    page = "1",
+    limit = "10",
+    state,
+  } = paginationOrderSchema.parse(req.query);
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
@@ -43,7 +46,11 @@ orderRoutes.get("/orders", async (req, res) => {
 });
 
 orderRoutes.patch("/orders/:id/advance", async (req, res) => {
-  const { page = "1", limit = "10", state } = paginationSchema.parse(req.query);
+  const {
+    page = "1",
+    limit = "10",
+    state,
+  } = paginationOrderSchema.parse(req.query);
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);

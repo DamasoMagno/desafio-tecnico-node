@@ -12,7 +12,7 @@ class DeleteOrderService {
   }
 
   async execute({ orderId }: OrderDTO) {
-    const existingOrder = await this.orderRepository.delete(orderId);
+    await this.orderRepository.delete(orderId);
   }
 }
 

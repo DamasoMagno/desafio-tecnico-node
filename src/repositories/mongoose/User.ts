@@ -6,6 +6,7 @@ export class UserRepository implements IUserRepository {
     const users = await User.find(filter).skip(skip).limit(limit);
     return users;
   }
+
   async findById(id: string) {
     return User.findById(id).select("-password");
   }

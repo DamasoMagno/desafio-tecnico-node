@@ -6,6 +6,7 @@ export class OrderRepository implements IOrderRepository {
     const orders = await Order.find(filter).skip(skip).limit(limit);
     return orders;
   }
+
   async findById(id: string) {
     return Order.findById(id);
   }
@@ -17,6 +18,7 @@ export class OrderRepository implements IOrderRepository {
   async update(id: string, data: Partial<IOrder>) {
     return Order.findByIdAndUpdate(id, data, { new: true });
   }
+
   async delete(id: string) {
     return Order.findByIdAndDelete(id);
   }

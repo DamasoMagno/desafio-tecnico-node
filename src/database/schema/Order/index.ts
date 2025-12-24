@@ -1,4 +1,5 @@
 import { Document, Schema, model } from "mongoose";
+import { serviceSchema } from "./service";
 
 interface IService {
   name: string;
@@ -9,7 +10,7 @@ interface IService {
 export interface IOrder extends Document {
   lab: string;
   patient: string;
-  customer: string;
+  customer: Schema.Types.ObjectId | string;
   state: "CREATED" | "ANALYSIS" | "COMPLETED";
   status: "ACTIVE" | "DELETED";
   services: IService[];
@@ -18,7 +19,11 @@ export interface IOrder extends Document {
 const orderSchema = new Schema<IOrder>({
   lab: { type: String, required: true },
   patient: { type: String, required: true },
-  customer: { type: String, required: true },
+  customer: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
   state: {
     type: String,
     enum: ["CREATED", "ANALYSIS", "COMPLETED"],
@@ -29,17 +34,10 @@ const orderSchema = new Schema<IOrder>({
     enum: ["ACTIVE", "DELETED"],
     default: "ACTIVE",
   },
-  services: [
-    {
-      name: { type: String, required: true },
-      value: { type: Number, required: true },
-      status: {
-        type: String,
-        enum: ["PENDING", "DONE"],
-        default: "PENDING",
-      },
-    },
-  ],
+  services: {
+    type: [serviceSchema],
+    required: true,
+  },
 });
 
 export const Order = model("Order", orderSchema);
