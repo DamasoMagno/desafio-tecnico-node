@@ -11,6 +11,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async fincByEmail(email: string) {
+    console.log(email);
     return User.findOne({ email }).select("-password");
   }
 

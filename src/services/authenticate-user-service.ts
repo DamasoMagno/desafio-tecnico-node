@@ -17,6 +17,7 @@ class AuthenticateUserService {
 
   async execute(userData: User) {
     const existingUser = await this.userRepository.fincByEmail(userData.email);
+
     if (!existingUser) {
       throw new InvalidCredentials("Email/password incorrect");
     }
