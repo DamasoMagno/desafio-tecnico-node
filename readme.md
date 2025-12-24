@@ -33,10 +33,10 @@ A aplicação foi construída seguindo princípios de **Clean Architecture** e *
 
 ### Etapa 2: Diferencial (Regras e Qualidade)
 
-- [] **Validação de Negócio:** Bloqueio de criação de pedidos sem serviços ou com valor total zerado.
+- [x] **Validação de Negócio:** Bloqueio de criação de pedidos sem serviços ou com valor total zerado.
 - [x] **Fluxo de Status:** Transição estrita (`CREATED` -> `ANALYSIS` -> `COMPLETED`) via endpoint `PATCH /orders/:id/advance`.
-- [] **Segurança:** Uso de DTOs e Projeções para nunca expor senhas no retorno das APIs.
-- [] **Testes Unitários:** Garantia de integridade da lógica de transição de estados.
+- [x] **Segurança:** Uso de DTOs e Projeções para nunca expor senhas no retorno das APIs.
+- [x] **Testes Unitários:** Garantia de integridade da lógica de transição de estados.
 
 ## ⚙️ Como Configurar no Ambiente Local
 
