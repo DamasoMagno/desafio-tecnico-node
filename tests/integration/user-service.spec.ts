@@ -13,12 +13,10 @@ describe("User Routes", () => {
     }
   });
 
-  // Limpa o banco ANTES de cada teste
   beforeEach(async () => {
     await User.deleteMany({});
   });
 
-  // Fecha a conexão DEPOIS de todos os testes
   afterAll(async () => {
     await mongoose.disconnect();
   });
@@ -29,17 +27,35 @@ describe("User Routes", () => {
       password: "password123",
     });
 
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty(
-      "message",
-      "User created successfully"
-    );
+    expect(response.status).toBe(204);
+    expect(response.body).toEqual({});
 
     const userInDb = await User.findOne({ email: "test@example.com" });
     expect(userInDb).toBeTruthy();
   });
 
   it("should be able to make authenticate", async () => {
+    await request(app).post("/users").send({
+      email: "test@example.com",
+      password: "password123",
+    });
+
+    const response = await request(app).post("/users/auth").send({
+      email: "test@example.com",
+      password: "password123",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("token");
+    expect(typeof response.body.token).toBe("string");
+  });
+
+  it("should be able to make authenticate and get user", async () => {
+    await request(app).post("/users").send({
+      email: "test@example.com",
+      password: "password123",
+    });
+
     const response = await request(app).post("/users/auth").send({
       email: "test@example.com",
       password: "password123",
@@ -47,8 +63,17 @@ describe("User Routes", () => {
 
     console.log(response.status, response.body);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("token");
     expect(typeof response.body.token).toBe("string");
+
+    const token = response.body.token;
+
+    const userResponse = await request(app)
+      .get("/users/me")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(userResponse.status).toBe(200);
+    expect(userResponse.body).toHaveProperty("email", "test@example.com");
   });
 });

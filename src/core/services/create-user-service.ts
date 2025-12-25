@@ -1,4 +1,6 @@
 import { IUserRepository } from "@/infra/repositories/IUserRepository";
+import { EntityExists } from "../errors/entity-exists";
+import { hash } from "bcryptjs";
 
 interface User {
   email: string;
@@ -12,12 +14,14 @@ class CreateUserService {
     const existingUser = await this.userRepository.findByEmail(userData.email);
 
     if (existingUser) {
-      throw new Error("User already exists with this email.");
+      throw new EntityExists("User already exists with this email.");
     }
+
+    const hashedPassword = await hash(userData.password, 10);
 
     await this.userRepository.register({
       email: userData.email,
-      password: userData.password,
+      password: hashedPassword,
     });
   }
 }

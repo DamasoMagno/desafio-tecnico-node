@@ -1,16 +1,12 @@
 import { EntityNotFound } from "@/core/errors/not-found";
-import { UserRepository } from "../repositories/mongoose/User";
+import { IUserRepository } from "@/infra/repositories/IUserRepository";
 
 interface User {
   userId: string;
 }
 
 class GetAuthenticateUserService {
-  private userRepository;
-
-  constructor(userRepository: UserRepository) {
-    this.userRepository = userRepository;
-  }
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(userData: User) {
     const existingUser = await this.userRepository.findById(userData.userId);
@@ -19,7 +15,7 @@ class GetAuthenticateUserService {
       throw new EntityNotFound("User not found");
     }
 
-    return;
+    return existingUser;
   }
 }
 

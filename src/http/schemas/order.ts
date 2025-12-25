@@ -1,5 +1,4 @@
 import z from "zod";
-import { Schema } from "mongoose";
 
 export const createOrder = z.object({
   lab: z.string(),

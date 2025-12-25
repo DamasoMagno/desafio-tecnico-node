@@ -18,7 +18,7 @@ export class UserController {
     const createUserService = makeCreateUserService();
 
     await createUserService.execute({ email, password });
-    res.status(201).json({ message: "User created successfully" });
+    res.status(204).json();
   }
 
   async getAuthenticatedUser(req: Request, res: Response) {
@@ -36,6 +36,6 @@ export class UserController {
     const authenticateUserService = makeAuthenticateUserService();
 
     const token = await authenticateUserService.execute({ email, password });
-    res.status(201).json({ token });
+    res.status(200).json({ token });
   }
 }

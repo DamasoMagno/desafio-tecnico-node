@@ -1,15 +1,11 @@
-import { OrderRepository } from "../repositories/mongoose/Order";
+import { IOrderRepository } from "@/infra/repositories/IOrderRepository";
 
 interface ListOrdersDTO {
   orderId: string;
 }
 
 class GetOrderService {
-  private orderRepository;
-
-  constructor(orderRepository: OrderRepository) {
-    this.orderRepository = orderRepository;
-  }
+  constructor(private orderRepository: IOrderRepository) {}
 
   async execute({ orderId }: ListOrdersDTO) {
     return await this.orderRepository.findById(orderId);

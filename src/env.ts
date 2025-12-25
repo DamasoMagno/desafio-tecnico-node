@@ -3,7 +3,7 @@ import "dotenv/config";
 
 export const envSchema = z.object({
   PORT: z.string().default("3000"),
-  MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
+  MONGO_URI: z.string().min(1, "MONGODB_URI is required"),
   JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
 });
 

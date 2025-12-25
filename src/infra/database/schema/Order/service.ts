@@ -6,15 +6,12 @@ export interface IService {
   status: "PENDING" | "DONE";
 }
 
-export const serviceSchema = new Schema<IService>(
-  {
-    name: { type: String, required: true },
-    value: { type: Number, required: true },
-    status: {
-      type: String,
-      enum: ["PENDING", "DONE"],
-      default: "PENDING",
-    },
+export const serviceSchema = new Schema<IService>({
+  name: { type: String, required: true },
+  value: { type: Number, required: true },
+  status: {
+    type: String,
+    enum: ["PENDING", "DONE"],
+    default: "PENDING",
   },
-  { _id: false }
-);
+});

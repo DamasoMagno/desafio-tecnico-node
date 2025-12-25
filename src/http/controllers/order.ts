@@ -53,7 +53,7 @@ export class OrderController {
     const { id } = orderIdParam.parse(req.params);
     const advanceOrderService = makeAdvanceOrderService();
 
-    const updatedOrder = await advanceOrderService.execute({ orderId: id });
+    await advanceOrderService.execute({ orderId: id });
     res.status(204).json();
   }
 

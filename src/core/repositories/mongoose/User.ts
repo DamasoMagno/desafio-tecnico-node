@@ -12,7 +12,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByEmail(email: string) {
-    return User.findOne({ email }).select("-password");
+    return User.findOne({ email });
   }
 
   async register(data: Partial<IUser>) {

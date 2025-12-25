@@ -7,16 +7,27 @@ interface IListOrdersDTO {
   limit: number;
 }
 
+interface IOrderQuery {
+  status: string;
+  state?: IOrder["state"];
+}
+
 export class OrderRepository implements IOrderRepository {
   async list({ state, skip, limit }: IListOrdersDTO): Promise<IOrder[]> {
-    const orders = await Order.find(state ? { state } : {})
-      .skip(skip)
-      .limit(limit);
+    const query: IOrderQuery = {
+      status: "ACTIVE",
+    };
+
+    if (state) {
+      query.state = state;
+    }
+
+    const orders = await Order.find(query).skip(skip).limit(limit).lean();
     return orders;
   }
 
   async findById(id: string) {
-    return Order.findById(id);
+    return Order.findById(id).lean();
   }
 
   async create(data: Partial<IOrder>) {

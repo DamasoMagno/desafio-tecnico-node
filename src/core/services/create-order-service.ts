@@ -1,3 +1,4 @@
+import { IOrderRepository } from "@/infra/repositories/IOrderRepository";
 import { OrderRepository } from "../repositories/mongoose/Order";
 
 interface OrderDTO {
@@ -11,11 +12,7 @@ interface OrderDTO {
 }
 
 class CreateOrderService {
-  private orderRepository;
-
-  constructor(orderRepository: OrderRepository) {
-    this.orderRepository = orderRepository;
-  }
+  constructor(private orderRepository: IOrderRepository) {}
 
   async execute(orderData: OrderDTO) {
     const hasServices = orderData.services && orderData.services.length > 0;
@@ -37,6 +34,11 @@ class CreateOrderService {
       customer: orderData.customer,
       state: "CREATED",
       status: "ACTIVE",
+      services: orderData.services.map((service) => ({
+        name: service.name,
+        value: service.value,
+        status: "PENDING",
+      })),
     });
   }
 }
