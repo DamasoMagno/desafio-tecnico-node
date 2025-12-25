@@ -1,15 +1,19 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import mongoose from "mongoose";
 import { app } from "@/app";
 import { User } from "@/infra/database/schema/User";
 
 describe("User Routes", () => {
+  let mongoServer: MongoMemoryServer;
+
   beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(
-        process.env.MONGO_URI_TEST || "mongodb://localhost:27017/test_db"
-      );
+      await mongoose.connect(uri);
     }
   });
 
@@ -19,6 +23,7 @@ describe("User Routes", () => {
 
   afterAll(async () => {
     await mongoose.disconnect();
+    await mongoServer.stop();
   });
 
   it("should be able to create a new user", async () => {
@@ -60,8 +65,6 @@ describe("User Routes", () => {
       email: "test@example.com",
       password: "password123",
     });
-
-    console.log(response.status, response.body);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("token");

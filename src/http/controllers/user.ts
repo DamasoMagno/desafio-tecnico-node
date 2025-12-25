@@ -23,6 +23,7 @@ export class UserController {
 
   async getAuthenticatedUser(req: Request, res: Response) {
     const { id } = req.user;
+    console.log(req.user);
     const getAuthenticateUserService = makeGetAuthenticateUserService();
 
     const existingUser = await getAuthenticateUserService.execute({

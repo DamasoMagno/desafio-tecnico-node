@@ -34,6 +34,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 
   if (error instanceof Error) {
     return res.status(400).json({
+      name: error.name,
       message: error.message,
     });
   }
