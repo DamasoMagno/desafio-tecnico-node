@@ -2,9 +2,10 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 export const app = express();
 
-import { connectToDatabase } from "./infra/database/index.js";
-import { userRoutes } from "./http/controllers/user.js";
-import { EntityNotFound } from "./core/errors/not-found.js";
+import { connectToDatabase } from "./infra/database/index";
+import { userRoutes } from "./http/routes/user.route";
+import { orderRoutes } from "./http/routes/order.route";
+import { EntityNotFound } from "./core/errors/not-found";
 import z from "zod";
 
 connectToDatabase()
@@ -18,6 +19,7 @@ connectToDatabase()
 app.use(express.json());
 app.use(cors());
 app.use(userRoutes);
+app.use(orderRoutes);
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof EntityNotFound) {

@@ -10,7 +10,7 @@ interface IService {
 export interface IOrder extends Document {
   lab: string;
   patient: string;
-  customer: Schema.Types.ObjectId | string;
+  customer: string;
   state: "CREATED" | "ANALYSIS" | "COMPLETED";
   status: "ACTIVE" | "DELETED";
   services: IService[];
@@ -20,9 +20,8 @@ const orderSchema = new Schema<IOrder>({
   lab: { type: String, required: true },
   patient: { type: String, required: true },
   customer: {
-    type: Schema.Types.ObjectId,
+    type: String,
     required: true,
-    ref: "User",
   },
   state: {
     type: String,

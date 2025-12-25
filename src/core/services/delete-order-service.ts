@@ -12,7 +12,9 @@ class DeleteOrderService {
   }
 
   async execute({ orderId }: OrderDTO) {
-    await this.orderRepository.delete(orderId);
+    await this.orderRepository.update(orderId, {
+      status: "DELETED",
+    });
   }
 }
 

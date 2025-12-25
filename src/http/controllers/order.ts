@@ -1,75 +1,67 @@
-import { Router } from "express";
-const orderRoutes = Router();
-
-import { UpdateOrderService } from "@/core/services/update-order-service";
-import { CreateOrderService } from "@/core/services/create-order-service";
-import { DeleteOrderService } from "@/core/services/delete-order-service";
-import { GetOrderService } from "@/core/services/get-order-service";
-import { OrderRepository } from "@/core/repositories/mongoose/Order";
+import { Request, Response } from "express";
 
 import { z } from "zod";
-import { Order } from "@/infra/database/schema/Order";
 import { paginationSchema } from "@/http/schemas/pagination";
-import { createOrder } from "../schemas/order";
-import { authMiddleware } from "../middleware/auth";
-
-const orderRepository = new OrderRepository();
-const createOrderService = new CreateOrderService(orderRepository);
-const getOrderService = new GetOrderService(orderRepository);
-const updateOrderService = new UpdateOrderService(orderRepository);
-const deleteOrderService = new DeleteOrderService(orderRepository);
+import { createOrder, orderIdParam } from "../schemas/order";
+import {
+  makeAdvanceOrderService,
+  makeCreateOrderService,
+  makeDeleteOrderService,
+  makeGetOrderService,
+  makeGetOrdersService,
+} from "@/core/factories/make-order-service";
 
 const paginationOrderSchema = paginationSchema.extend({
-  state: z.string().optional(),
+  state: z.enum(["CREATED", "ANALYSIS", "COMPLETED"]).optional(),
 });
 
-orderRoutes.post("/orders", authMiddleware, async (req, res) => {
-  const { lab, patient } = createOrder.parse(req.body);
+export class OrderController {
+  async createOrder(req: Request, res: Response) {
+    const { lab, patient, customer, services } = createOrder.parse(req.body);
+    const createOrderService = makeCreateOrderService();
 
-  await Order.create({
-    lab,
-    patient,
-    state: "CREATED",
-    status: "ACTIVE",
-  });
+    await createOrderService.execute({ lab, patient, customer, services });
+    res.status(201).json();
+  }
 
-  res.status(201).json({ message: "Order created successfully" });
-});
+  async getOrder(req: Request, res: Response) {
+    const { id } = orderIdParam.parse(req.params);
+    const getOrderService = makeGetOrderService();
 
-orderRoutes.get("/orders", authMiddleware, async (req, res) => {
-  const {
-    page = "1",
-    limit = "10",
-    state,
-  } = paginationOrderSchema.parse(req.query);
+    const order = await getOrderService.execute({ orderId: id });
+    res.status(200).json({ order });
+  }
 
-  const pageNumber = parseInt(page, 10);
-  const limitNumber = parseInt(limit, 10);
+  async listOrders(req: Request, res: Response) {
+    const {
+      page = "1",
+      limit = "10",
+      state,
+    } = paginationOrderSchema.parse(req.query);
+    const getOrdersService = makeGetOrdersService();
 
-  const skip = (pageNumber - 1) * limitNumber;
+    const orders = await getOrdersService.execute({
+      state,
+      page,
+      limit,
+    });
 
-  const orders = await Order.find(state ? { state } : {})
-    .skip(skip)
-    .limit(limitNumber);
-  res.json(orders);
-});
+    res.status(200).json(orders);
+  }
 
-orderRoutes.patch("/orders/:id/advance", authMiddleware, async (req, res) => {
-  const {
-    page = "1",
-    limit = "10",
-    state,
-  } = paginationOrderSchema.parse(req.query);
+  async advanceOrder(req: Request, res: Response) {
+    const { id } = orderIdParam.parse(req.params);
+    const advanceOrderService = makeAdvanceOrderService();
 
-  const pageNumber = parseInt(page, 10);
-  const limitNumber = parseInt(limit, 10);
+    const updatedOrder = await advanceOrderService.execute({ orderId: id });
+    res.status(204).json();
+  }
 
-  const skip = (pageNumber - 1) * limitNumber;
+  async deleteOrder(req: Request, res: Response) {
+    const { id } = orderIdParam.parse(req.params);
+    const deleteOrderService = makeDeleteOrderService();
 
-  const orders = await Order.find(state ? { state } : {})
-    .skip(skip)
-    .limit(limitNumber);
-  res.json(orders);
-});
-
-export { orderRoutes };
+    await deleteOrderService.execute({ orderId: id });
+    res.status(204).json();
+  }
+}

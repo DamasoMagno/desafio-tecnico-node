@@ -1,20 +1,28 @@
+import { IOrder } from "@/infra/database/schema/Order";
 import { OrderRepository } from "../repositories/mongoose/Order";
+import { paginate } from "@/utils/pagination";
 
 interface ListOrdersDTO {
-  filter: object;
-  skip: number;
-  limit: number;
+  state: IOrder["state"] | undefined;
+  page: string;
+  limit: string;
 }
 
-class CreateOrderService {
+class GetOrdersService {
   private orderRepository;
 
   constructor(orderRepository: OrderRepository) {
     this.orderRepository = orderRepository;
   }
 
-  async execute({ filter, skip, limit }: ListOrdersDTO) {
-    return await this.orderRepository.list(filter, skip, limit);
+  async execute({ state, page, limit }: ListOrdersDTO) {
+    const { skip, limit: limitNumber } = paginate(page, limit);
+
+    return await this.orderRepository.list({
+      state: state,
+      skip,
+      limit: limitNumber,
+    });
   }
 }
-export { CreateOrderService };
+export { GetOrdersService };
