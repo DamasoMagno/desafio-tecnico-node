@@ -115,7 +115,7 @@ describe("Order routes", () => {
       .set("Authorization", `Bearer ${accessToken}`);
 
     expect(order.status).toBe(200);
-    expect(order.body.patient).toBe("João da Silva");
+    expect(order.body.patient).toBe(ordersInDb);
   });
 
   it("should be able to list all orders", async () => {

@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
+import z from "zod";
 
 export interface IUser {
+  _id: string;
   email: string;
   password: string;
 }

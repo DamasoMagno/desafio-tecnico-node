@@ -1,32 +1,24 @@
 import { IOrderRepository } from "@/infra/repositories/IOrderRepository";
+import { EntityNotFound } from "../errors/not-found";
+import { advanceState } from "@/utils/advance-state";
 
 interface OrderDTO {
   orderId: string;
 }
 
 class AdvanceOrderService {
-  private readonly orderState = ["CREATED", "ANALYSIS", "COMPLETED"] as const;
-
   constructor(private orderRepository: IOrderRepository) {}
 
   async execute({ orderId }: OrderDTO) {
     const existingOrder = await this.orderRepository.findById(orderId);
 
     if (!existingOrder) {
-      throw new Error("Order not found.");
+      throw new EntityNotFound("Order not found.");
     }
 
-    const orderState = existingOrder?.state;
-
-    const currentState = this.orderState.indexOf(orderState);
-    const nextState = this.orderState[currentState + 1];
-
-    if (!nextState) {
-      throw new Error("The order is already in the final state.");
-    }
-
+    const state = advanceState(existingOrder.state);
     await this.orderRepository.update(orderId, {
-      state: nextState,
+      state,
     });
   }
 }

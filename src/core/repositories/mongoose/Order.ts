@@ -27,7 +27,10 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async findById(id: string) {
-    return Order.findById(id).lean();
+    return Order.findOne({
+      _id: id,
+      status: "ACTIVE",
+    }).lean();
   }
 
   async create(data: Partial<IOrder>) {

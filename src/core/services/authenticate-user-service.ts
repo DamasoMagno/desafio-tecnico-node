@@ -29,7 +29,7 @@ class AuthenticateUserService {
     }
 
     const token = sign({}, env.JWT_SECRET, {
-      subject: existingUser.email,
+      subject: existingUser._id.toString(),
       expiresIn: "7d",
     });
 

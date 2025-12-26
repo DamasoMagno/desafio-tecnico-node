@@ -29,7 +29,7 @@ export class OrderController {
     const getOrderService = makeGetOrderService();
 
     const order = await getOrderService.execute({ orderId: id });
-    res.status(200).json({ order });
+    res.status(200).json(order);
   }
 
   async listOrders(req: Request, res: Response) {

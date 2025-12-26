@@ -10,6 +10,7 @@ import { EntityNotFound } from "./core/errors/not-found";
 import z from "zod";
 import { InvalidCredentials } from "./core/errors/invalid-credentials";
 import { EntityExists } from "./core/errors/entity-exists";
+import { EntityError } from "./core/errors/entity-error";
 
 connectToDatabase().catch((error) => {
   console.error("Database connection error:", error);
@@ -24,7 +25,8 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   if (
     error instanceof EntityNotFound ||
     error instanceof InvalidCredentials ||
-    error instanceof EntityExists
+    error instanceof EntityExists ||
+    error instanceof EntityError
   ) {
     return res.status(error.statusCode).json({
       name: error.name,
