@@ -11,7 +11,7 @@ Este projeto é uma API REST para gestão de pedidos laboratoriais, desenvolvida
 - **Validação de Dados:** Zod
 - **Autenticação:** JWT (JSON Web Token)
 - **Criptografia:** BcryptJS (Hash de senhas)
-- **Testes:** Vitest (Diferencial)
+- **Testes:** Vitest
 
 ## 🏗️ Arquitetura e Padrões (SOLID)
 
@@ -38,6 +38,37 @@ A aplicação foi construída seguindo princípios de **Clean Architecture** e *
 - [x] **Segurança:** Uso de DTOs e Projeções para nunca expor senhas no retorno das APIs.
 - [x] **Testes Unitários:** Garantia de integridade da lógica de transição de estados.
 
+## ❗ Tratamento de Erros
+
+A aplicação utiliza **erros customizados de domínio** para representar falhas previsíveis de negócio e infraestrutura, como:
+
+- Entidades não encontradas
+- Estados inválidos
+- Regras de negócio violadas
+
+Esses erros são tratados por um **middleware global**, que converte exceções de domínio em respostas HTTP adequadas, como:
+
+- `404 Not Found`
+- `409 Conflict`
+- `422 Unprocessable Entity`
+- `500 Internal Server Error`
+
+## 🧪 Estratégia de Testes
+
+A aplicação conta com uma estratégia de testes em dois níveis:
+
+### Testes Unitários
+
+- Validação de regras de negócio isoladas
+- Teste da lógica de transição de estados dos pedidos
+- Funções puras de domínio testadas sem dependência de banco ou HTTP
+
+### Testes de Integração
+
+- Validação completa das rotas da API
+- Testes envolvendo middleware de autenticação, controllers, services e repositórios
+- Garantia de que os endpoints funcionam conforme esperado em cenários reais
+
 ## ⚙️ Como Configurar no Ambiente Local
 
 ### 1. Clonar o repositório
@@ -49,10 +80,12 @@ cd desafio-tecnico-backend
 
 ### 2. Configurar Variáveis de Ambiente
 
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis obrigatórias:
+
 ```bash
 PORT=3000
 MONGO_URI=mongodb+srv://<usuario>:<senha>@cluster.mongodb.net/desafio_db
-JWT_SECRET=a-string-secret-at-least-256-bits-lon
+JWT_SECRET=uma-string-secreta-segura
 ```
 
 ### 3. Instalar dependências e rodar
@@ -60,4 +93,10 @@ JWT_SECRET=a-string-secret-at-least-256-bits-lon
 ```bash
 npm install
 npm run dev
+```
+
+### Executar testes
+
+```bash
+npm run test
 ```

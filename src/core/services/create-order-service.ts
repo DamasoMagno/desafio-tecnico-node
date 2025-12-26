@@ -1,5 +1,6 @@
 import { IOrderRepository } from "@/infra/repositories/IOrderRepository";
 import { OrderRepository } from "../repositories/mongoose/Order";
+import { EntityError } from "../errors/entity-error";
 
 interface OrderDTO {
   lab: string;
@@ -21,11 +22,13 @@ class CreateOrderService {
     );
 
     if (!hasServices) {
-      throw new Error("An order must contain at least one service.");
+      throw new EntityError("An order must contain at least one service.");
     }
 
     if (serviceHasAnyValueLessThanOrEqualToZero) {
-      throw new Error("All services must have a value greater than zero.");
+      throw new EntityError(
+        "All services must have a value greater than zero."
+      );
     }
 
     await this.orderRepository.create({
