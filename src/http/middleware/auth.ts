@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import type { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 
@@ -13,7 +14,7 @@ export function authMiddleware(
   }
 
   const [, token] = authHeader.split(" ");
-  const decoded = verify(token, "your-secret-token") as { sub: string };
+  const decoded = verify(token, env.JWT_SECRET) as { sub: string };
 
   if (!decoded) {
     return res.status(403).json({ message: "Forbidden" });

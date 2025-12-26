@@ -2,6 +2,7 @@ import { sign } from "jsonwebtoken";
 import { InvalidCredentials } from "@/core/errors/invalid-credentials";
 import bcrypt from "bcryptjs";
 import { IUserRepository } from "@/infra/repositories/IUserRepository";
+import { env } from "@/env";
 
 interface User {
   email: string;
@@ -27,7 +28,7 @@ class AuthenticateUserService {
       throw new InvalidCredentials("Email/password incorrect");
     }
 
-    const token = sign({}, "your-secret-token", {
+    const token = sign({}, env.JWT_SECRET, {
       subject: existingUser.email,
       expiresIn: "7d",
     });

@@ -7,4 +7,11 @@ export const envSchema = z.object({
   JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
 });
 
-export const env = envSchema.parse(process.env);
+const envValid = envSchema.safeParse(process.env);
+
+if (!envValid.success) {
+  console.error("❌ Invalid environment variables:", envValid.error.format());
+  throw new Error("Invalid environment variables.");
+}
+
+export const env = envValid.data;
