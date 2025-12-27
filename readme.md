@@ -50,7 +50,6 @@ Esses erros são tratados por um **middleware global**, que converte exceções 
 
 - `404 Not Found`
 - `409 Conflict`
-- `422 Unprocessable Entity`
 - `500 Internal Server Error`
 
 ## 🧪 Estratégia de Testes
