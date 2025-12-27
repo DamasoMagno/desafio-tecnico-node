@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 
-import { Unauthorized } from "@/core/errors/unauthorized";
 import { env } from "@/env";
 
 export function authMiddleware(

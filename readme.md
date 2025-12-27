@@ -49,6 +49,7 @@ A aplicação utiliza **erros customizados de domínio** para representar falhas
 Esses erros são tratados por um **middleware global**, que converte exceções de domínio em respostas HTTP adequadas, como:
 
 - `404 Not Found`
+- `400 Bad Request`
 - `409 Conflict`
 - `500 Internal Server Error`
 
