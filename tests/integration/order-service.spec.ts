@@ -67,20 +67,74 @@ describe("Order routes", () => {
     expect(orderInDb).toBeTruthy();
   });
 
+  it("should not be able to create a new order with no service", async () => {
+    const response = await request(app)
+      .post("/orders")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        lab: "Primeiro laboratório",
+        patient: "João da Silva",
+        customer: "Maria da Silva",
+        services: [],
+      });
+
+    expect(response.status).toBe(400);
+  });
+
+  it("shoud not ble able to create a new order with service value 0", async () => {
+    const response = await request(app)
+      .post("/orders")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        lab: "Primeiro laboratório",
+        patient: "João da Silva",
+        customer: "Maria da Silva",
+        services: [
+          {
+            name: "Exame de sangue",
+            value: 0,
+          },
+        ],
+      });
+
+    expect(response.status).toBe(400);
+  });
+
   it("should be able to advance a order", async () => {
     const response = await request(app)
       .post("/orders")
       .set("Authorization", `Bearer ${accessToken}`)
       .send(orderData);
 
-    const ordersInDb = await Order.findOne({ patient: orderData.patient });
     expect(response.status).toBe(201);
 
-    const advanceResponse = await request(app)
-      .patch(`/orders/${ordersInDb?._id.toString()}/advance`)
+    const createdOrder = await Order.findOne({ patient: orderData.patient });
+    expect(createdOrder?.state).toBe("CREATED");
+    const orderId = createdOrder?._id.toString();
+
+    const advanceResponseFromCreatedToAnalysis = await request(app)
+      .patch(`/orders/${orderId}/advance`)
       .set("Authorization", `Bearer ${accessToken}`);
 
-    expect(advanceResponse.status).toBe(204);
+    expect(advanceResponseFromCreatedToAnalysis.status).toBe(204);
+    const analysisOrder = await Order.findOne({ patient: orderData.patient });
+    expect(analysisOrder?.state).toBe("ANALYSIS");
+
+    const secondAdvanceResponse = await request(app)
+      .patch(`/orders/${orderId}/advance`)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(secondAdvanceResponse.status).toBe(204);
+
+    const completedOrder = await Order.findOne({ patient: orderData.patient });
+    expect(completedOrder?.state).toBe("COMPLETED");
+
+    const invalidAdvanceResponse = await request(app)
+      .patch(`/orders/${orderId}/advance`)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(invalidAdvanceResponse.status).toBe(400);
+    expect(invalidAdvanceResponse.body.message).toBe("Cannot advance state.");
   });
 
   it("should be able to get a order", async () => {
@@ -119,8 +173,6 @@ describe("Order routes", () => {
       .get("/orders/deleted")
       .set("Authorization", `Bearer ${accessToken}`);
 
-    console.log(deletedOrders.status, deletedOrders.body);
-
     expect(deletedOrders.status).toBe(200);
   });
 
@@ -135,8 +187,6 @@ describe("Order routes", () => {
       .set("Authorization", `Bearer ${accessToken}`);
 
     expect(orders.status).toBe(200);
-    // expect(orders.body.orders.length).toBe(1);
-    // expect(orders.body.orders[0].patient).toBe("João da Silva");
   });
 
   it("should be able to delete a order", async () => {

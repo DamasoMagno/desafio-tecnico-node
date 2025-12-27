@@ -21,7 +21,7 @@ class GetOrdersService {
       limit: limitNumber,
     });
 
-    const totalPages = Math.floor(countOrders / limitNumber);
+    const totalPages = Math.ceil(countOrders / limitNumber);
 
     return {
       orders,

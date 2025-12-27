@@ -7,13 +7,13 @@ export const createOrder = z.object({
   services: z.array(
     z.object({
       name: z.string(),
-      value: z.number().min(0).positive(),
+      value: z.number().min(0),
     })
   ),
 });
 
 export const orderIdParam = z.object({
-  id: z.string(),
+  id: z.string().regex(/^[0-9a-fA-F]{24}$/),
 });
 
 export const updateOrder = z.object({
