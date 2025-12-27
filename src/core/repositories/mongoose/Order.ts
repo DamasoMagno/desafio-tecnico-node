@@ -33,6 +33,17 @@ export class OrderRepository implements IOrderRepository {
     }).lean();
   }
 
+  async listDeleted({ state, skip, limit }: IListOrdersDTO): Promise<IOrder[]> {
+    const query: { state?: IOrder["state"] } = {};
+
+    if (state) {
+      query.state = state;
+    }
+
+    const orders = await Order.find(query).skip(skip).limit(limit).lean();
+    return orders;
+  }
+
   async create(data: Partial<IOrder>) {
     return Order.create(data);
   }

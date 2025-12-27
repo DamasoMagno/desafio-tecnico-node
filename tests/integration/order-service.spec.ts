@@ -8,6 +8,18 @@ import { app } from "@/app";
 import { Order } from "@/infra/database/schema/Order";
 import { User } from "@/infra/database/schema/User";
 
+const orderData = {
+  lab: "Primeiro laboratório",
+  patient: "João da Silva",
+  customer: "Maria da Silva",
+  services: [
+    {
+      name: "Exame de sangue",
+      value: 150,
+    },
+  ],
+};
+
 describe("Order routes", () => {
   let accessToken: string;
   let mongoServer: MongoMemoryServer;
@@ -47,21 +59,11 @@ describe("Order routes", () => {
     const response = await request(app)
       .post("/orders")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        lab: "Primeiro laboratório",
-        patient: "João da Silva",
-        customer: "Maria da Silva",
-        services: [
-          {
-            name: "Exame de sangue",
-            value: 150,
-          },
-        ],
-      });
+      .send(orderData);
 
     expect(response.status).toBe(201);
 
-    const orderInDb = await Order.findOne({ patient: "João da Silva" });
+    const orderInDb = await Order.findOne({ patient: orderData.patient });
     expect(orderInDb).toBeTruthy();
   });
 
@@ -69,19 +71,9 @@ describe("Order routes", () => {
     const response = await request(app)
       .post("/orders")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        lab: "Primeiro laboratório",
-        patient: "João da Silva",
-        customer: "Maria da Silva",
-        services: [
-          {
-            name: "Exame de sangue",
-            value: 150,
-          },
-        ],
-      });
+      .send(orderData);
 
-    const ordersInDb = await Order.findOne({ patient: "João da Silva" });
+    const ordersInDb = await Order.findOne({ patient: orderData.patient });
     expect(response.status).toBe(201);
 
     const advanceResponse = await request(app)
@@ -95,19 +87,11 @@ describe("Order routes", () => {
     await request(app)
       .post("/orders")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        lab: "Primeiro laboratório",
-        patient: "João da Silva",
-        customer: "Maria da Silva",
-        services: [
-          {
-            name: "Exame de sangue",
-            value: 150,
-          },
-        ],
-      });
+      .send(orderData);
 
-    const ordersInDb = await Order.findOne({ patient: "João da Silva" }).lean();
+    const ordersInDb = await Order.findOne({
+      patient: orderData.patient,
+    }).lean();
     expect(ordersInDb).toBeTruthy();
 
     const order = await request(app)
@@ -118,21 +102,33 @@ describe("Order routes", () => {
     expect(order.body.patient).toBe("João da Silva");
   });
 
+  it("should be able to list all deleted orders", async () => {
+    await request(app)
+      .post("/orders")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send(orderData);
+
+    const ordersInDb = await Order.findOne({ patient: orderData.patient });
+    expect(ordersInDb).toBeTruthy();
+
+    await request(app)
+      .delete(`/orders/${ordersInDb?._id.toString()}`)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    const deletedOrders = await request(app)
+      .get("/orders/deleted")
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    console.log(deletedOrders.status, deletedOrders.body);
+
+    expect(deletedOrders.status).toBe(200);
+  });
+
   it("should be able to list all orders", async () => {
     await request(app)
       .post("/orders")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        lab: "Primeiro laboratório",
-        patient: "João da Silva",
-        customer: "Maria da Silva",
-        services: [
-          {
-            name: "Exame de sangue",
-            value: 150,
-          },
-        ],
-      });
+      .send(orderData);
 
     const orders = await request(app)
       .get("/orders")
@@ -147,19 +143,9 @@ describe("Order routes", () => {
     await request(app)
       .post("/orders")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send({
-        lab: "Primeiro laboratório",
-        patient: "João da Silva",
-        customer: "Maria da Silva",
-        services: [
-          {
-            name: "Exame de sangue",
-            value: 150,
-          },
-        ],
-      });
+      .send(orderData);
 
-    const ordersInDb = await Order.findOne({ patient: "João da Silva" });
+    const ordersInDb = await Order.findOne({ patient: orderData.patient });
     expect(ordersInDb).toBeTruthy();
 
     const deleteResponse = await request(app)

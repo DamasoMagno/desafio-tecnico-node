@@ -7,7 +7,7 @@ export const createOrder = z.object({
   services: z.array(
     z.object({
       name: z.string(),
-      value: z.number().min(0),
+      value: z.number().min(0).positive(),
     })
   ),
 });
@@ -24,7 +24,7 @@ export const updateOrder = z.object({
     .array(
       z.object({
         name: z.string(),
-        value: z.number().min(0),
+        value: z.number().min(0).positive(),
       })
     )
     .optional(),

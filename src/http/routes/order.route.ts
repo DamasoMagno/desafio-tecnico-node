@@ -13,6 +13,12 @@ orderRoutes.post(
 );
 
 orderRoutes.get(
+  "/orders/deleted",
+  authMiddleware,
+  orderController.listDeletedOrders.bind(orderController)
+);
+
+orderRoutes.get(
   "/orders/:id",
   authMiddleware,
   orderController.getOrder.bind(orderController)

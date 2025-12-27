@@ -3,6 +3,7 @@ import { CreateOrderService } from "@/core/services/create-order-service";
 import { DeleteOrderService } from "@/core/services/delete-order-service";
 import { GetOrderService } from "@/core/services/get-order-service";
 import { GetOrdersService } from "@/core/services/get-orders-service";
+import { GetDeleteOrdersService } from "@/core/services/get-deleted-order-service";
 import { OrderRepository } from "@/core/repositories/mongoose/Order";
 
 const orderRepository = new OrderRepository();
@@ -25,4 +26,8 @@ export function makeDeleteOrderService() {
 
 export function makeGetOrdersService() {
   return new GetOrdersService(orderRepository);
+}
+
+export function makeGetDeletedOrdersService() {
+  return new GetDeleteOrdersService(orderRepository);
 }

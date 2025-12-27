@@ -11,5 +11,6 @@ export interface IOrderRepository {
   create(data: Partial<IOrder>): Promise<IOrder>;
   update(id: string, data: Partial<IOrder>): Promise<IOrder | null>;
   list({ state, skip, limit }: ListOrders): Promise<IOrder[]>;
+  listDeleted({ state, skip, limit }: ListOrders): Promise<IOrder[]>;
   delete(id: string): Promise<IOrder | null>;
 }

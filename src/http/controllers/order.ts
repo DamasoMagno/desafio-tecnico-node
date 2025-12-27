@@ -7,6 +7,7 @@ import {
   makeAdvanceOrderService,
   makeCreateOrderService,
   makeDeleteOrderService,
+  makeGetDeletedOrdersService,
   makeGetOrderService,
   makeGetOrdersService,
 } from "@/core/factories/make-order-service";
@@ -41,6 +42,23 @@ export class OrderController {
     const getOrdersService = makeGetOrdersService();
 
     const orders = await getOrdersService.execute({
+      state,
+      page,
+      limit,
+    });
+
+    res.status(200).json(orders);
+  }
+
+  async listDeletedOrders(req: Request, res: Response) {
+    const {
+      page = "1",
+      limit = "10",
+      state,
+    } = paginationOrderSchema.parse(req.query);
+    const getDeletedOrdersService = makeGetDeletedOrdersService();
+
+    const orders = await getDeletedOrdersService.execute({
       state,
       page,
       limit,
