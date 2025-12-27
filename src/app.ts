@@ -34,17 +34,17 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  if (error instanceof Error) {
-    return res.status(400).json({
-      name: error.name,
-      message: error.message,
-    });
-  }
-
   if (error instanceof z.ZodError) {
     return res.status(400).json({
       message: "Validation error",
       issues: error.format(),
+    });
+  }
+
+  if (error instanceof Error) {
+    return res.status(400).json({
+      name: error.name,
+      message: error.message,
     });
   }
 

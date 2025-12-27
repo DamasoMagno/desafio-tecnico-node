@@ -33,8 +33,26 @@ export class OrderRepository implements IOrderRepository {
     }).lean();
   }
 
+  async count({
+    state,
+  }: {
+    state: IOrder["state"] | undefined;
+  }): Promise<number> {
+    const query: IOrderQuery = {
+      status: "ACTIVE",
+    };
+
+    if (state) {
+      query.state = state;
+    }
+
+    return Order.countDocuments(query);
+  }
+
   async listDeleted({ state, skip, limit }: IListOrdersDTO): Promise<IOrder[]> {
-    const query: { state?: IOrder["state"] } = {};
+    const query: { state?: IOrder["state"]; status: "DELETED" } = {
+      status: "DELETED",
+    };
 
     if (state) {
       query.state = state;
@@ -53,6 +71,6 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async delete(id: string) {
-    return Order.findByIdAndDelete(id);
+    return Order.findByIdAndUpdate(id, { status: "DELETED" }, { new: true });
   }
 }

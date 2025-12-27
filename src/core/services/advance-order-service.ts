@@ -16,6 +16,10 @@ class AdvanceOrderService {
       throw new EntityNotFound("Order not found.");
     }
 
+    if (existingOrder.status === "DELETED") {
+      throw new EntityNotFound("Cannot advance a deleted order.");
+    }
+
     const state = advanceState(existingOrder.state);
     await this.orderRepository.update(orderId, {
       state,

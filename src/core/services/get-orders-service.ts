@@ -14,11 +14,20 @@ class GetOrdersService {
   async execute({ state, page, limit }: ListOrdersDTO) {
     const { skip, limit: limitNumber } = paginate(page, limit);
 
-    return await this.orderRepository.list({
+    const countOrders = await this.orderRepository.count({ state });
+    const orders = await this.orderRepository.list({
       state: state,
       skip,
       limit: limitNumber,
     });
+
+    const totalPages = Math.floor(countOrders / limitNumber);
+
+    return {
+      orders,
+      totalPages,
+      currentPage: Number(page),
+    };
   }
 }
 export { GetOrdersService };

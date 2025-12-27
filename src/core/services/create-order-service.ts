@@ -21,12 +21,12 @@ class CreateOrderService {
       throw new EntityError("An order must contain at least one service.");
     }
 
-    const serviceHasAnyValueLessThanOrEqualToZero = orderData.services.reduce(
+    const serviceTotalValue = orderData.services.reduce(
       (acc, service) => (acc += service.value),
       0
     );
 
-    if (serviceHasAnyValueLessThanOrEqualToZero === 0) {
+    if (serviceTotalValue === 0) {
       throw new EntityError(
         "The value of the services must be greater than zero."
       );
