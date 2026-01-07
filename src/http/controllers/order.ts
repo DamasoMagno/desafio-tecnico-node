@@ -2,14 +2,21 @@ import { Request, Response } from "express";
 
 import { z } from "zod";
 import { paginationSchema } from "@/http/schemas/pagination";
-import { createOrder, orderIdParam } from "../schemas/order";
+import {
+  createCommentSchema,
+  createOrder,
+  orderIdParam,
+  updateServicesOrder,
+} from "../schemas/order";
 import {
   makeAdvanceOrderService,
+  makeCreateCommentService,
   makeCreateOrderService,
   makeDeleteOrderService,
   makeGetDeletedOrdersService,
   makeGetOrderService,
   makeGetOrdersService,
+  makeUpdateServicesOrderService,
 } from "@/core/factories/make-order-service";
 
 const paginationOrderSchema = paginationSchema.extend({
@@ -72,6 +79,25 @@ export class OrderController {
     const advanceOrderService = makeAdvanceOrderService();
 
     await advanceOrderService.execute({ orderId: id });
+    res.status(204).json();
+  }
+
+  async createComment(req: Request, res: Response) {
+    const { id } = orderIdParam.parse(req.params);
+    const { content } = createCommentSchema.parse(req.body);
+    const createCommentService = makeCreateCommentService();
+
+    await createCommentService.execute({ orderId: id, content });
+
+    res.status(201).json();
+  }
+
+  async updateServices(req: Request, res: Response) {
+    const { id } = orderIdParam.parse(req.params);
+    const { services } = updateServicesOrder.parse(req.body);
+    const updateServicesOrderService = makeUpdateServicesOrderService();
+
+    await updateServicesOrderService.execute({ orderId: id, services });
     res.status(204).json();
   }
 

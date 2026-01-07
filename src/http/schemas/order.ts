@@ -29,3 +29,16 @@ export const updateOrder = z.object({
     )
     .optional(),
 });
+
+export const createCommentSchema = z.object({
+  content: z.string().min(1),
+});
+
+export const updateServicesOrder = z.object({
+  services: z.array(
+    z.object({
+      name: z.string(),
+      value: z.number().min(0).positive(),
+    })
+  ),
+});

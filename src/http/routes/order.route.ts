@@ -12,6 +12,12 @@ orderRoutes.post(
   orderController.createOrder.bind(orderController)
 );
 
+orderRoutes.patch(
+  "/orders/:id/comments",
+  authMiddleware,
+  orderController.createComment.bind(orderController)
+);
+
 orderRoutes.get(
   "/orders/deleted",
   authMiddleware,
@@ -34,6 +40,12 @@ orderRoutes.patch(
   "/orders/:id/advance",
   authMiddleware,
   orderController.advanceOrder.bind(orderController)
+);
+
+orderRoutes.patch(
+  "/orders/:id/update-services",
+  authMiddleware,
+  orderController.updateServices.bind(orderController)
 );
 
 orderRoutes.delete(

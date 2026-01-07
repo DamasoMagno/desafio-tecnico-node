@@ -1,5 +1,8 @@
 import { Order, IOrder } from "@/infra/database/schema/Order";
-import { IOrderRepository } from "@/infra/repositories/IOrderRepository";
+import {
+  IOrderRepository,
+  UpdateServicesDTO,
+} from "@/infra/repositories/IOrderRepository";
 
 interface IListOrdersDTO {
   state: IOrder["state"] | undefined;
@@ -13,6 +16,38 @@ interface IOrderQuery {
 }
 
 export class OrderRepository implements IOrderRepository {
+  async updateServices({
+    orderId,
+    services,
+  }: UpdateServicesDTO): Promise<IOrder | null> {
+    const order = await Order.findById(orderId);
+    const updatedServices = services.map((service) => ({
+      name: service.name,
+      value: service.value,
+      status: "PENDING",
+    }));
+    const allServices = [...(order?.services || []), ...updatedServices];
+    await Order.findByIdAndUpdate(orderId, { services: allServices });
+
+    return order;
+  }
+
+  async createComment(
+    orderId: string,
+    content: string
+  ): Promise<IOrder | null> {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return null;
+    }
+
+    order.comments.push({ content, createdAt: new Date() });
+    await order.save();
+
+    return order;
+  }
+
   async list({ state, skip, limit }: IListOrdersDTO): Promise<IOrder[]> {
     const query: IOrderQuery = {
       status: "ACTIVE",

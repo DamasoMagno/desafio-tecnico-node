@@ -1,5 +1,6 @@
 import { Document, Schema, model } from "mongoose";
 import { serviceSchema } from "./service";
+import { commentSchema, IComment } from "./comment";
 
 interface IService {
   name: string;
@@ -14,6 +15,7 @@ export interface IOrder extends Document {
   state: "CREATED" | "ANALYSIS" | "COMPLETED";
   status: "ACTIVE" | "DELETED";
   services: IService[];
+  comments: IComment[];
 }
 
 const orderSchema = new Schema<IOrder>({
@@ -36,6 +38,10 @@ const orderSchema = new Schema<IOrder>({
   services: {
     type: [serviceSchema],
     required: true,
+  },
+  comments: {
+    type: [commentSchema],
+    default: [],
   },
 });
 

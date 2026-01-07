@@ -5,11 +5,21 @@ import { GetOrderService } from "@/core/services/get-order-service";
 import { GetOrdersService } from "@/core/services/get-orders-service";
 import { GetDeleteOrdersService } from "@/core/services/get-deleted-order-service";
 import { OrderRepository } from "@/core/repositories/mongoose/Order";
+import { UpdateServicesOrderService } from "../services/update-services-order-service";
+import { CreateCommentService } from "../services/create-comment-service";
 
 const orderRepository = new OrderRepository();
 
 export function makeCreateOrderService() {
   return new CreateOrderService(orderRepository);
+}
+
+export function makeCreateCommentService() {
+  return new CreateCommentService(orderRepository);
+}
+
+export function makeUpdateServicesOrderService() {
+  return new UpdateServicesOrderService(orderRepository);
 }
 
 export function makeGetOrderService() {
